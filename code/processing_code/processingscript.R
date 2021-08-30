@@ -11,7 +11,7 @@ library(here) #to set paths
 
 #path to data
 #note the use of the here() package and not absolute paths
-data_location <- here::here("data","raw_data","exampledata.xlsx")
+data_location <- here::here("data","raw_data","exampledata2.xlsx")
 
 #load data. 
 #note that for functions that come from specific packages (instead of base R)
@@ -20,6 +20,7 @@ data_location <- here::here("data","raw_data","exampledata.xlsx")
 #specifying the package makes it clearer where the function "lives",
 #but it adds typing. You can do it either way.
 rawdata <- readxl::read_excel(data_location)
+dim(rawdata) # 14 4 
 
 #take a look at the data
 dplyr::glimpse(rawdata)
@@ -42,14 +43,25 @@ print(rawdata)
 # Since we unfortunately don't know, we'll have to remove this person.
 # similarly, there is a person with weight of 7000, which is impossible,
 # and one person with missing weight.
-# to be able to analyze the data, we'll remove those 5 individuals
+# to be able to analyze the data, we'll remove those 4 individuals
 
 # this is one way of doing it. Note that if the data gets updated, 
 # we need to decide if the thresholds are ok (newborns could be <50)
+# Rename variable name to replace space with underscore
+# There is an entry which records "> 9000", which turned power level column into character.
+# We can use the mid-point between 9000 and highest possible value to recode this entry, but 
+# I just used 9000 since that information was unknown, and the column is now converted into numeric.
 
-processeddata <- rawdata %>% dplyr::filter( Height != "sixty" ) %>% 
-                             dplyr::mutate(Height = as.numeric(Height)) %>% 
-                             dplyr::filter(Height > 50 & Weight < 1000)
+processeddata <- rawdata %>% 
+  dplyr::filter( Height != "sixty" ) %>%
+  dplyr::rename("Power_Level" = "Power Level") %>% 
+  dplyr::mutate_at(vars(3),list(~gsub(">","",.))) %>% 
+  dplyr::mutate(Height      = as.numeric(Height),
+                Power_Level = as.numeric(Power_Level)) %>% 
+  dplyr::filter(Height > 50 & Weight < 1000) 
+  
+
+
 
 # save data as RDS
 # I suggest you save your processed and cleaned data as RDS or RDA/Rdata files. 
@@ -62,5 +74,3 @@ processeddata <- rawdata %>% dplyr::filter( Height != "sixty" ) %>%
 save_data_location <- here::here("data","processed_data","processeddata.rds")
 
 saveRDS(processeddata, file = save_data_location)
-
-
