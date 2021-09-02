@@ -9,6 +9,7 @@ output:
   bookdown::word_document2: 
     toc: false
     number_sections: true
+    fig_caption: yes
   bookdown::html_document2: 
     toc: false
 bibliography: ../references.bib
@@ -66,10 +67,13 @@ knitr::kable(resulttable, caption = 'Data summary table.')
 
 Figure \@ref(fig:resultfigure) shows a scatterplot figure produced by one of the R scripts.
 
-```{r resultfigure,  fig.cap='Analysis figure.', echo=FALSE}
+```{r resultfigure,  fig.cap='Boxplot of Class vs. Height.', echo=FALSE}
 knitr::include_graphics("../../results/resultfigure.png")
 ```
 
+```{r resultfigure2,  fig.cap='Scatterplot of Weight vs. Power Level.', echo=FALSE}
+knitr::include_graphics("../../results/resultfigure2.png")
+```
 
 ## Full analysis
 
@@ -102,6 +106,5 @@ Note that this cited reference will show up at the end of the document, the refe
 
 
 # References
-
 
 
