@@ -8,13 +8,14 @@
 library(ggplot2) #for plotting
 library(broom) #for cleaning up output from lm()
 library(here) #for data loading/saving
+library(dplyr) #gets rid of %>% cannot be found error
 
 #path to data
 #note the use of the here() package and not absolute paths
 data_location <- here::here("data","processed_data","processeddata.rds")
 
 #load data. 
-mydata <- readRDS(here)
+mydata <- readRDS(data_location)
 
 ######################################
 #Data exploration/description
@@ -24,14 +25,14 @@ mydata <- readRDS(here)
 #For instance check out the tableone or skimr packages
 
 #summarize data 
-mysummary = summary(here)
+mysummary = summary(mydata)
 
 #look at summary
-print(here)
+print(mysummary)
 
 #do the same, but with a bit of trickery to get things into the 
 #shape of a data frame (for easier saving/showing in manuscript)
-summary_df = data.frame(do.call(cbind, lapply(mydata, height)))
+summary_df = data.frame(do.call(cbind, lapply(mydata, summary)))
 
 #save data frame table to file for later use in manuscript
 summarytable_file = here("results", "summarytable.rds")
@@ -40,8 +41,8 @@ saveRDS(summary_df, file = summarytable_file)
 
 #make a scatterplot of data
 #we also add a linear regression line to it
-p1 <- mydata %>% ggplot(aes(x=Class, y=Height)) + geom_point(mydata) + geom_smooth(method='lm')
-p2 <- mydata %>% ggplot(aes(x=Weight, y=PowerLevel)) + geom_point(mydata) + geom_smooth(method='lm')
+p1 <- mydata %>% ggplot(aes(x=Class, y=Height)) + geom_boxplot() 
+p2 <- mydata %>% ggplot(aes(x=Weight, y=Power_Level)) + geom_point() + geom_smooth(method='lm')
 
 #look at figure
 plot(p1)
@@ -49,8 +50,10 @@ plot(p2)
 
 #save figure
 figure_file = here("results","resultfigure.png")
-ggsave(filename = figure_file, plot=p1) 
+ggsave(filename = figure_file, plot=p1)
+figure_file2 = here("results","resultfigure2.png")
 ggsave(filename = figure_file2, plot=p2)
+
 
 ######################################
 #Data fitting/statistical analysis
