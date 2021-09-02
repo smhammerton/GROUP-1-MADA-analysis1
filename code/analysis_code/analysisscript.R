@@ -14,7 +14,7 @@ library(here) #for data loading/saving
 data_location <- here::here("data","processed_data","processeddata.rds")
 
 #load data. 
-mydata <- readRDS(data_location)
+mydata <- readRDS(here)
 
 ######################################
 #Data exploration/description
@@ -24,14 +24,14 @@ mydata <- readRDS(data_location)
 #For instance check out the tableone or skimr packages
 
 #summarize data 
-mysummary = summary(mydata)
+mysummary = summary(here)
 
 #look at summary
-print(mysummary)
+print(here)
 
 #do the same, but with a bit of trickery to get things into the 
 #shape of a data frame (for easier saving/showing in manuscript)
-summary_df = data.frame(do.call(cbind, lapply(mydata, summary)))
+summary_df = data.frame(do.call(cbind, lapply(mydata, height)))
 
 #save data frame table to file for later use in manuscript
 summarytable_file = here("results", "summarytable.rds")
@@ -40,14 +40,17 @@ saveRDS(summary_df, file = summarytable_file)
 
 #make a scatterplot of data
 #we also add a linear regression line to it
-p1 <- mydata %>% ggplot(aes(x=Height, y=Weight)) + geom_point() + geom_smooth(method='lm')
+p1 <- mydata %>% ggplot(aes(x=Class, y=Height)) + geom_point(mydata) + geom_smooth(method='lm')
+p2 <- mydata %>% ggplot(aes(x=Weight, y=PowerLevel)) + geom_point(mydata) + geom_smooth(method='lm')
 
 #look at figure
 plot(p1)
+plot(p2)
 
 #save figure
 figure_file = here("results","resultfigure.png")
 ggsave(filename = figure_file, plot=p1) 
+ggsave(filename = figure_file2, plot=p2)
 
 ######################################
 #Data fitting/statistical analysis
